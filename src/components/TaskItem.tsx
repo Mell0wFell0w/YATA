@@ -2,6 +2,8 @@ import { useState } from 'react'
 import type { Task, Priority, Category } from '../types'
 import type { TaskUpdate } from '../hooks/useTasks'
 import { CategorySelect } from './CategorySelect'
+import { PRIORITY_STYLES } from '../lib/priorityStyles'
+import { isOverdue, formatDueDate } from '../lib/dates'
 
 interface Props {
   task: Task
@@ -49,10 +51,22 @@ interface ViewProps {
 
 function TaskItemView({ task, categories, onToggle, onEdit, onDelete }: ViewProps) {
   const isDone = task.status === 'done'
+  const overdue = isOverdue(task.dueDate, task.status)
   const category = categories.find(c => c.id === task.categoryId) ?? null
+  const priorityStyle = PRIORITY_STYLES[task.priority]
 
   return (
-    <li className="group rounded-[8px] whisper-border bg-white p-4 flex items-start gap-3">
+    <li
+      className={`group rounded-[8px] whisper-border bg-white p-4 pl-5 flex items-start gap-3 relative overflow-hidden transition-opacity ${
+        isDone ? 'opacity-60' : 'opacity-100'
+      }`}
+    >
+      <span
+        aria-hidden
+        className="absolute left-0 top-0 bottom-0 w-[3px]"
+        style={{ backgroundColor: priorityStyle.accent }}
+      />
+
       <button
         type="button"
         onClick={() => onToggle(task.id)}
@@ -75,24 +89,31 @@ function TaskItemView({ task, categories, onToggle, onEdit, onDelete }: ViewProp
         onClick={onEdit}
         className="flex-1 min-w-0 text-left cursor-text"
       >
-        <p className={`text-base ${isDone ? 'text-warm-gray-300 line-through' : 'text-notion-black'}`}>
+        <p className={`text-base leading-snug ${isDone ? 'text-warm-gray-300 line-through' : 'text-notion-black'}`}>
           {task.description}
         </p>
-        <div className="flex items-center gap-2 mt-1 text-xs font-semibold text-warm-gray-500 flex-wrap">
-          <span className="uppercase tracking-wider">{task.priority}</span>
+        <div className="flex items-center gap-2 mt-1.5 text-xs font-semibold text-warm-gray-500 flex-wrap">
+          <span
+            className="uppercase tracking-[0.08em]"
+            style={{ color: priorityStyle.accent }}
+          >
+            {priorityStyle.label}
+          </span>
           {task.dueDate && (
             <>
-              <span>·</span>
-              <span>{formatDate(task.dueDate)}</span>
+              <span aria-hidden className="text-warm-gray-300">·</span>
+              <span className={overdue ? 'text-accent-orange' : ''}>
+                {overdue ? 'Overdue · ' : ''}{formatDueDate(task.dueDate)}
+              </span>
             </>
           )}
           {category && (
             <>
-              <span>·</span>
+              <span aria-hidden className="text-warm-gray-300">·</span>
               <span
                 className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full"
                 style={{
-                  backgroundColor: `${category.color}1a`, // hex + 1a ~= 10% alpha
+                  backgroundColor: `${category.color}1a`,
                   color: category.color,
                 }}
               >
@@ -202,9 +223,4 @@ function TaskItemEdit({ task, categories, onSave, onCancel }: EditProps) {
       </div>
     </li>
   )
-}
-
-function formatDate(iso: string): string {
-  const d = new Date(iso + 'T00:00:00')
-  return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
 }

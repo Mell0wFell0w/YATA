@@ -22,7 +22,7 @@ export function CategoryManager({ categories, onAdd, onUpdate, onDelete }: Props
   }
 
   return (
-    <div className="mt-8">
+      <div className="mt-12 pt-6 border-t border-black/10">
       <button
         type="button"
         onClick={() => setIsOpen(v => !v)}

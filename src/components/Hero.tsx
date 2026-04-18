@@ -3,7 +3,7 @@ import caveat from 'tegaki/fonts/caveat'
 
 export function Hero() {
   return (
-    <header className="mb-12">
+    <header className="mb-10">
       <TegakiRenderer
         font={caveat}
         style={{
@@ -14,8 +14,8 @@ export function Hero() {
       >
         YATA
       </TegakiRenderer>
-      <p className="mt-2 text-lg font-semibold text-warm-gray-500">
-        Yet Another ToDo App
+      <p className="mt-1 text-base font-medium text-warm-gray-500">
+        Yet another todo app.
       </p>
     </header>
   )
