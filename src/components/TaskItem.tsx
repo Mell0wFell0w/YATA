@@ -1,21 +1,24 @@
 import { useState } from 'react'
-import type { Task, Priority } from '../types'
+import type { Task, Priority, Category } from '../types'
 import type { TaskUpdate } from '../hooks/useTasks'
+import { CategorySelect } from './CategorySelect'
 
 interface Props {
   task: Task
+  categories: Category[]
   onToggle: (id: string) => void
   onUpdate: (id: string, update: TaskUpdate) => void
   onDelete: (id: string) => void
 }
 
-export function TaskItem({ task, onToggle, onUpdate, onDelete }: Props) {
+export function TaskItem({ task, categories, onToggle, onUpdate, onDelete }: Props) {
   const [isEditing, setIsEditing] = useState(false)
 
   if (isEditing) {
     return (
       <TaskItemEdit
         task={task}
+        categories={categories}
         onSave={update => {
           onUpdate(task.id, update)
           setIsEditing(false)
@@ -28,6 +31,7 @@ export function TaskItem({ task, onToggle, onUpdate, onDelete }: Props) {
   return (
     <TaskItemView
       task={task}
+      categories={categories}
       onToggle={onToggle}
       onEdit={() => setIsEditing(true)}
       onDelete={onDelete}
@@ -37,13 +41,15 @@ export function TaskItem({ task, onToggle, onUpdate, onDelete }: Props) {
 
 interface ViewProps {
   task: Task
+  categories: Category[]
   onToggle: (id: string) => void
   onEdit: () => void
   onDelete: (id: string) => void
 }
 
-function TaskItemView({ task, onToggle, onEdit, onDelete }: ViewProps) {
+function TaskItemView({ task, categories, onToggle, onEdit, onDelete }: ViewProps) {
   const isDone = task.status === 'done'
+  const category = categories.find(c => c.id === task.categoryId) ?? null
 
   return (
     <li className="group rounded-[8px] whisper-border bg-white p-4 flex items-start gap-3">
@@ -72,12 +78,30 @@ function TaskItemView({ task, onToggle, onEdit, onDelete }: ViewProps) {
         <p className={`text-base ${isDone ? 'text-warm-gray-300 line-through' : 'text-notion-black'}`}>
           {task.description}
         </p>
-        <div className="flex items-center gap-2 mt-1 text-xs font-semibold text-warm-gray-500">
+        <div className="flex items-center gap-2 mt-1 text-xs font-semibold text-warm-gray-500 flex-wrap">
           <span className="uppercase tracking-wider">{task.priority}</span>
           {task.dueDate && (
             <>
               <span>·</span>
               <span>{formatDate(task.dueDate)}</span>
+            </>
+          )}
+          {category && (
+            <>
+              <span>·</span>
+              <span
+                className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full"
+                style={{
+                  backgroundColor: `${category.color}1a`, // hex + 1a ~= 10% alpha
+                  color: category.color,
+                }}
+              >
+                <span
+                  className="w-1.5 h-1.5 rounded-full"
+                  style={{ backgroundColor: category.color }}
+                />
+                {category.name}
+              </span>
             </>
           )}
         </div>
@@ -97,14 +121,16 @@ function TaskItemView({ task, onToggle, onEdit, onDelete }: ViewProps) {
 
 interface EditProps {
   task: Task
+  categories: Category[]
   onSave: (update: TaskUpdate) => void
   onCancel: () => void
 }
 
-function TaskItemEdit({ task, onSave, onCancel }: EditProps) {
+function TaskItemEdit({ task, categories, onSave, onCancel }: EditProps) {
   const [description, setDescription] = useState(task.description)
   const [priority, setPriority] = useState<Priority>(task.priority)
   const [dueDate, setDueDate] = useState(task.dueDate ?? '')
+  const [categoryId, setCategoryId] = useState<string | null>(task.categoryId)
 
   function handleSave() {
     if (!description.trim()) return
@@ -112,6 +138,7 @@ function TaskItemEdit({ task, onSave, onCancel }: EditProps) {
       description,
       priority,
       dueDate: dueDate || null,
+      categoryId,
     })
   }
 
@@ -135,7 +162,7 @@ function TaskItemEdit({ task, onSave, onCancel }: EditProps) {
         autoFocus
         className="w-full text-base outline-none"
       />
-      <div className="flex items-center gap-3 mt-3 pt-3 border-t border-black/10">
+      <div className="flex items-center gap-3 mt-3 pt-3 border-t border-black/10 flex-wrap">
         <select
           value={priority}
           onChange={e => setPriority(e.target.value as Priority)}
@@ -150,6 +177,11 @@ function TaskItemEdit({ task, onSave, onCancel }: EditProps) {
           value={dueDate}
           onChange={e => setDueDate(e.target.value)}
           className="text-sm font-medium text-warm-gray-500 bg-transparent outline-none cursor-pointer"
+        />
+        <CategorySelect
+          categories={categories}
+          value={categoryId}
+          onChange={setCategoryId}
         />
         <div className="ml-auto flex items-center gap-2">
           <button

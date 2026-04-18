@@ -1,14 +1,22 @@
 import { useState } from 'react'
-import type { Priority } from '../types'
+import type { Priority, Category } from '../types'
+import { CategorySelect } from './CategorySelect'
 
 interface Props {
-  onAdd: (input: { description: string; priority: Priority; dueDate: string | null }) => void
+  categories: Category[]
+  onAdd: (input: {
+    description: string
+    priority: Priority
+    dueDate: string | null
+    categoryId: string | null
+  }) => void
 }
 
-export function AddTaskForm({ onAdd }: Props) {
+export function AddTaskForm({ categories, onAdd }: Props) {
   const [description, setDescription] = useState('')
   const [priority, setPriority] = useState<Priority>('medium')
   const [dueDate, setDueDate] = useState('')
+  const [categoryId, setCategoryId] = useState<string | null>(null)
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -17,10 +25,12 @@ export function AddTaskForm({ onAdd }: Props) {
       description,
       priority,
       dueDate: dueDate || null,
+      categoryId,
     })
     setDescription('')
     setPriority('medium')
     setDueDate('')
+    setCategoryId(null)
   }
 
   return (
@@ -35,7 +45,7 @@ export function AddTaskForm({ onAdd }: Props) {
         placeholder="What needs doing?"
         className="w-full text-base outline-none placeholder:text-warm-gray-300"
       />
-      <div className="flex items-center gap-3 mt-3 pt-3 border-t border-black/10">
+      <div className="flex items-center gap-3 mt-3 pt-3 border-t border-black/10 flex-wrap">
         <select
           value={priority}
           onChange={e => setPriority(e.target.value as Priority)}
@@ -50,6 +60,11 @@ export function AddTaskForm({ onAdd }: Props) {
           value={dueDate}
           onChange={e => setDueDate(e.target.value)}
           className="text-sm font-medium text-warm-gray-500 bg-transparent outline-none cursor-pointer"
+        />
+        <CategorySelect
+          categories={categories}
+          value={categoryId}
+          onChange={setCategoryId}
         />
         <button
           type="submit"

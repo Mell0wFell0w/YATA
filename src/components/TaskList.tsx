@@ -1,15 +1,16 @@
-import type { Task } from '../types'
+import type { Task, Category } from '../types'
 import type { TaskUpdate } from '../hooks/useTasks'
 import { TaskItem } from './TaskItem'
 
 interface Props {
   tasks: Task[]
+  categories: Category[]
   onToggle: (id: string) => void
   onUpdate: (id: string, update: TaskUpdate) => void
   onDelete: (id: string) => void
 }
 
-export function TaskList({ tasks, onToggle, onUpdate, onDelete }: Props) {
+export function TaskList({ tasks, categories, onToggle, onUpdate, onDelete }: Props) {
   if (tasks.length === 0) {
     return (
       <div className="rounded-[12px] whisper-border bg-white p-8 text-center">
@@ -24,6 +25,7 @@ export function TaskList({ tasks, onToggle, onUpdate, onDelete }: Props) {
         <TaskItem
           key={task.id}
           task={task}
+          categories={categories}
           onToggle={onToggle}
           onUpdate={onUpdate}
           onDelete={onDelete}

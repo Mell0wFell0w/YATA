@@ -7,6 +7,7 @@ export interface TaskUpdate {
   description?: string
   priority?: Priority
   dueDate?: string | null
+  categoryId?: string | null
 }
 
 export function useTasks() {
@@ -16,6 +17,7 @@ export function useTasks() {
     description: string
     priority: Priority
     dueDate: string | null
+    categoryId: string | null
   }) {
     const task: Task = {
       id: crypto.randomUUID(),
@@ -23,7 +25,7 @@ export function useTasks() {
       status: 'open',
       priority: input.priority,
       dueDate: input.dueDate,
-      categoryId: null,
+      categoryId: input.categoryId,
       createdAt: new Date().toISOString(),
     }
     setTasks(prev => [task, ...prev])
@@ -46,6 +48,7 @@ export function useTasks() {
           ...(update.description !== undefined && { description: update.description.trim() }),
           ...(update.priority !== undefined && { priority: update.priority }),
           ...(update.dueDate !== undefined && { dueDate: update.dueDate }),
+          ...(update.categoryId !== undefined && { categoryId: update.categoryId }),
         }
       })
     )
@@ -55,5 +58,18 @@ export function useTasks() {
     setTasks(prev => prev.filter(t => t.id !== id))
   }
 
-  return { tasks, addTask, toggleTask, updateTask, deleteTask }
+  function clearCategoryFromTasks(categoryId: string) {
+    setTasks(prev =>
+      prev.map(t => (t.categoryId === categoryId ? { ...t, categoryId: null } : t))
+    )
+  }
+
+  return {
+    tasks,
+    addTask,
+    toggleTask,
+    updateTask,
+    deleteTask,
+    clearCategoryFromTasks,
+  }
 }
