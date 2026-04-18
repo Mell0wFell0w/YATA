@@ -64,6 +64,7 @@ export function AddTaskForm({ categories, onAdd }: Props) {
           type="date"
           value={dueDate}
           onChange={e => setDueDate(e.target.value)}
+          onClick={e => (e.currentTarget as HTMLInputElement).showPicker?.()}
           className="text-sm font-medium text-warm-gray-500 bg-transparent outline-none cursor-pointer"
         />
         <CategorySelect
