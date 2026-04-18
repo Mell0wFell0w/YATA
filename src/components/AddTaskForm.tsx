@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { Priority, Category } from '../types'
 import { CategorySelect } from './CategorySelect'
+import { AutoTextarea } from './TaskItem'
 
 interface Props {
   categories: Category[]
@@ -38,12 +39,16 @@ export function AddTaskForm({ categories, onAdd }: Props) {
       onSubmit={handleSubmit}
       className="rounded-[12px] whisper-border shadow-card bg-white p-4 mb-6"
     >
-      <input
-        type="text"
+      <AutoTextarea
         value={description}
-        onChange={e => setDescription(e.target.value)}
+        onChange={setDescription}
         placeholder="What needs doing?"
-        className="w-full text-base outline-none placeholder:text-warm-gray-300"
+        onKeyDown={e => {
+          if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault()
+            handleSubmit(e as unknown as React.FormEvent)
+          }
+        }}
       />
       <div className="flex items-center gap-3 mt-3 pt-3 border-t border-black/10 flex-wrap">
         <select

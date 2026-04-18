@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { Task, Priority, Category } from '../types'
 import type { TaskUpdate } from '../hooks/useTasks'
 import { CategorySelect } from './CategorySelect'
@@ -89,7 +89,7 @@ function TaskItemView({ task, categories, onToggle, onEdit, onDelete }: ViewProp
         onClick={onEdit}
         className="flex-1 min-w-0 text-left cursor-text"
       >
-        <p className={`text-base leading-snug ${isDone ? 'text-warm-gray-300 line-through' : 'text-notion-black'}`}>
+        <p className={`text-base leading-snug break-words whitespace-pre-wrap ${isDone ? 'text-warm-gray-300 line-through' : 'text-notion-black'}`}>
           {task.description}
         </p>
         <div className="flex items-center gap-2 mt-1.5 text-xs font-semibold text-warm-gray-500 flex-wrap">
@@ -147,6 +147,38 @@ interface EditProps {
   onCancel: () => void
 }
 
+interface AutoTextareaProps {
+  value: string
+  onChange: (value: string) => void
+  onKeyDown?: (e: React.KeyboardEvent) => void
+  autoFocus?: boolean
+  placeholder?: string
+}
+
+export function AutoTextarea({ value, onChange, onKeyDown, autoFocus, placeholder }: AutoTextareaProps) {
+  const ref = useRef<HTMLTextAreaElement>(null)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    el.style.height = 'auto'
+    el.style.height = `${el.scrollHeight}px`
+  }, [value])
+
+  return (
+    <textarea
+      ref={ref}
+      value={value}
+      onChange={e => onChange(e.target.value)}
+      onKeyDown={onKeyDown}
+      autoFocus={autoFocus}
+      placeholder={placeholder}
+      rows={1}
+      className="w-full text-base outline-none resize-none overflow-hidden bg-transparent placeholder:text-warm-gray-300"
+    />
+  )
+}
+
 function TaskItemEdit({ task, categories, onSave, onCancel }: EditProps) {
   const [description, setDescription] = useState(task.description)
   const [priority, setPriority] = useState<Priority>(task.priority)
@@ -164,7 +196,7 @@ function TaskItemEdit({ task, categories, onSave, onCancel }: EditProps) {
   }
 
   function handleKeyDown(e: React.KeyboardEvent) {
-    if (e.key === 'Enter') {
+    if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
       handleSave()
     } else if (e.key === 'Escape') {
@@ -175,13 +207,11 @@ function TaskItemEdit({ task, categories, onSave, onCancel }: EditProps) {
 
   return (
     <li className="rounded-[8px] whisper-border shadow-card bg-white p-4">
-      <input
-        type="text"
+      <AutoTextarea
         value={description}
-        onChange={e => setDescription(e.target.value)}
+        onChange={setDescription}
         onKeyDown={handleKeyDown}
         autoFocus
-        className="w-full text-base outline-none"
       />
       <div className="flex items-center gap-3 mt-3 pt-3 border-t border-black/10 flex-wrap">
         <select
