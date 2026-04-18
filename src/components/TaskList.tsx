@@ -8,13 +8,16 @@ interface Props {
   onToggle: (id: string) => void
   onUpdate: (id: string, update: TaskUpdate) => void
   onDelete: (id: string) => void
+  isFiltered: boolean
 }
 
-export function TaskList({ tasks, categories, onToggle, onUpdate, onDelete }: Props) {
+export function TaskList({ tasks, categories, onToggle, onUpdate, onDelete, isFiltered }: Props) {
   if (tasks.length === 0) {
     return (
       <div className="rounded-[12px] whisper-border bg-white p-8 text-center">
-        <p className="text-warm-gray-500">No tasks yet. Add one above.</p>
+        <p className="text-warm-gray-500">
+          {isFiltered ? 'No tasks match your filters.' : 'No tasks yet. Add one above.'}
+        </p>
       </div>
     )
   }
