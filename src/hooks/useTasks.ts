@@ -3,6 +3,12 @@ import type { Task, Priority } from '../types'
 
 const STORAGE_KEY = 'yata.tasks.v1'
 
+export interface TaskUpdate {
+  description?: string
+  priority?: Priority
+  dueDate?: string | null
+}
+
 export function useTasks() {
   const [tasks, setTasks] = useLocalStorage<Task[]>(STORAGE_KEY, [])
 
@@ -23,5 +29,31 @@ export function useTasks() {
     setTasks(prev => [task, ...prev])
   }
 
-  return { tasks, addTask }
+  function toggleTask(id: string) {
+    setTasks(prev =>
+      prev.map(t =>
+        t.id === id ? { ...t, status: t.status === 'open' ? 'done' : 'open' } : t
+      )
+    )
+  }
+
+  function updateTask(id: string, update: TaskUpdate) {
+    setTasks(prev =>
+      prev.map(t => {
+        if (t.id !== id) return t
+        return {
+          ...t,
+          ...(update.description !== undefined && { description: update.description.trim() }),
+          ...(update.priority !== undefined && { priority: update.priority }),
+          ...(update.dueDate !== undefined && { dueDate: update.dueDate }),
+        }
+      })
+    )
+  }
+
+  function deleteTask(id: string) {
+    setTasks(prev => prev.filter(t => t.id !== id))
+  }
+
+  return { tasks, addTask, toggleTask, updateTask, deleteTask }
 }
