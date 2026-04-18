@@ -1,1 +1,56 @@
 @import "tailwindcss";
+
+@theme {
+  /* Fonts */
+  --font-sans: "Inter", -apple-system, system-ui, "Segoe UI", Helvetica, Arial, sans-serif;
+
+  /* Notion palette */
+  --color-notion-black: rgba(0, 0, 0, 0.95);
+  --color-notion-blue: #0075de;
+  --color-notion-blue-active: #005bab;
+  --color-focus-blue: #097fe8;
+  --color-badge-blue-bg: #f2f9ff;
+  --color-badge-blue-text: #097fe8;
+
+  --color-warm-white: #f6f5f4;
+  --color-warm-dark: #31302e;
+  --color-warm-gray-500: #615d59;
+  --color-warm-gray-300: #a39e98;
+
+  --color-accent-teal: #2a9d99;
+  --color-accent-green: #1aae39;
+  --color-accent-orange: #dd5b00;
+  --color-accent-pink: #ff64c8;
+  --color-accent-purple: #391c57;
+  --color-accent-brown: #523410;
+
+  /* Radii */
+  --radius-micro: 4px;
+  --radius-subtle: 5px;
+  --radius-standard: 8px;
+  --radius-comfy: 12px;
+  --radius-large: 16px;
+
+  /* Shadows */
+  --shadow-card: 0 4px 18px rgba(0,0,0,0.04), 0 2.025px 7.84688px rgba(0,0,0,0.027), 0 0.8px 2.925px rgba(0,0,0,0.02), 0 0.175px 1.04062px rgba(0,0,0,0.01);
+  --shadow-deep: 0 1px 3px rgba(0,0,0,0.01), 0 3px 7px rgba(0,0,0,0.02), 0 7px 15px rgba(0,0,0,0.02), 0 14px 28px rgba(0,0,0,0.04), 0 23px 52px rgba(0,0,0,0.05);
+}
+
+/* Global resets and base styles */
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-feature-settings: "lnum", "locl";
+  color: var(--color-notion-black);
+  background-color: #ffffff;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Whisper border utility (reused everywhere) */
+.whisper-border {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
