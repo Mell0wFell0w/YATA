@@ -1,73 +1,46 @@
-# React + TypeScript + Vite
+# YATA: Yet Another ToDo App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A minimalist todo app built for IS 542 final. React + TypeScript + Vite + Tailwind v4, with localStorage persistence and a handwritten hero drawn stroke-by-stroke by Tegaki.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- Add, edit, delete, toggle done
+- Due dates with overdue warnings
+- Three priority levels with colored accents
+- User-defined categories with CRUD and color picker
+- Filter by status and category, sort by date or priority
+- Auto-sizing description field for long tasks
+- localStorage persistence
+- Notion-inspired design system with handwritten Tegaki hero
 
-## React Compiler
+## Reflection
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### What I prioritized
 
-## Expanding the ESLint configuration
+I wanted to focus on styling. I was confident the React and TypeScript would come together, so I looked for a distinctive visual angle and landed on Tegaki for a hand-drawn hero that communicates the idea of note-taking. The plan shifted once I realized I would run out of time. I moved priority to core functionality, then to bug fixing and UX polish that did not depend on styling. I have used Supabase on previous projects and like it, but for a todo app with a single user it felt like overkill. Skipping it was the right call since I ran out of time anyway.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Tradeoff
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+User-defined categories over predefined. More UI surface (a category manager, color picker, orphan cleanup when a category is deleted) in exchange for flexibility. It is the choice I would want in my own app. Even if I had gone with predefined categories, I would have made them editable because user autonomy matters to me.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### What I'm proud of
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+The Notion-inspired design system paired with the Tegaki handwritten logo. The handwriting gives the app personality without breaking the minimalism. Also the small things that are easy to miss: orphan cleanup when deleting a category, the date picker UX fix so clicking anywhere on the field opens the calendar, and the auto-sizing textarea for long task descriptions. Small change, real difference.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Prompts that I used while building
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- Why do I get a warning when using @theme in Tailwind v4?
+- Explain discriminated unions and typed reducers in Python terms.
+- Should I extract React state into a custom hook instead of keeping it in the component?
+- How does Framer Motion handle layout animations for list items that enter and exit?
+- How do React refs work with showPicker()?
+- What TypeScript utility types are useful for update payloads? 
+- When would I use Partial vs Pick?
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## Stack
+
+- React 18 + TypeScript
+- Vite
+- Tailwind CSS v4
+- Tegaki (Caveat font)
+- localStorage
